@@ -12,17 +12,17 @@ mode = st.selectbox(
     ),
 )
 
-with st.expander("Calendar Mode"):
-    title_event1 = st.text_input("Event Title")
+with st.expander("**Information**", expanded=False):
+    title_event1 = st.text_input("Event Title: ")
     color = st.selectbox("Choose Color:", ("red",
                                            "yellow",
                                            "orange",
                                            "green",
                                            "blue",
                                            "brown"))
-    start_date = st.date_input("Start Date")
-    end_date = st.date_input("End Date")
-    description = st.text_area("Description")
+    start_date = st.date_input("Start Date: ")
+    end_date = st.date_input("End Date: ")
+    description = st.text_area("Description: ")
 
     submit = st.button("Submit")
 
@@ -42,7 +42,6 @@ if submit:
     st.session_state.events.append(new_event)
 
     st.snow()  # Successfully
-
 
 calendar_options = {
     "editable": "true",
