@@ -8,8 +8,8 @@ import streamlit_authenticator as stauth
 
 st.set_page_config(page_title='Login to your account', layout='wide')
 
-name = ["Anh Tran"]
-username = ["anhtran"]
+name = ["Anh Tran", 'ABC']
+username = ["anhtran", 'abc']
 
 file_path = Path(__file__).parent / "hash_pw.pkl"
 with open(file_path, "rb") as file:
@@ -27,4 +27,8 @@ if authenticator_status == None:
     st.warning("Please enter your username and password")
 
 if authenticator_status:
-    st.balloons()
+    st.balloons() # Successfully
+
+    # # ---- MAINPAGE ----
+    st.title("Welcome Demo App")
+    st.markdown("##")
