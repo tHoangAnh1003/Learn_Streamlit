@@ -24,7 +24,7 @@ with st.expander("**Information**", expanded=False):
     end_date = st.date_input("End Date: ")
     description = st.text_area("Description: ")
 
-    submit = st.button("Submit")
+    submit = st.button("Submit", type="primary")
 
 if "events" not in st.session_state:
     st.session_state.events = [

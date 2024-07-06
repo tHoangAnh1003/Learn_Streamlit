@@ -1,57 +1,77 @@
 import streamlit as st
-import pandas as pd
+from streamlit_calendar import calendar
+from datetime import datetime
 
-dates = pd.date_range(start='2024-01-01', end='2024-12-31')
+st.set_page_config(page_title="Demo cho streamlit-calendar", page_icon="📆")
 
-st.title('Danh sách các ngày từ 1/1/2024 đến 31/12/2024')
+# Hàm để tạo sự kiện mới
+def create_event():
+    title_event1 = st.text_input("Tiêu đề sự kiện: ", key="title_event")
+    color = st.selectbox("Chọn màu:", ("red", "yellow", "orange", "green", "blue", "brown"), key="color_event")
+    start_date = st.date_input("Ngày bắt đầu: ", key="start_date_event", value=st.session_state["selected_date"])
+    end_date = st.date_input("Ngày kết thúc: ", key="end_date_event", value=st.session_state["selected_date"])
+    description = st.text_area("Mô tả: ", key="description_event")
 
-container = st.container()
-container.markdown(
-    """
-    <style>
-    .scroll-container {
-        display: flex;
-        overflow-x: auto;
-        white-space: nowrap;
+    submit = st.button("Gửi", key="submit_event")
+
+    if submit:
+        new_event = {
+            "title": title_event1,
+            "color": color,
+            "start": f"{start_date}",
+            "end": f"{end_date}",
+            "description": description,
+        }
+        st.session_state.events.append(new_event)
+        st.snow()  # Hiệu ứng khi thêm sự kiện thành công
+
+# Khởi tạo trạng thái session cho sự kiện
+if "events" not in st.session_state:
+    st.session_state.events = []
+
+# Khởi tạo trạng thái session cho ngày được chọn
+if "selected_date" not in st.session_state:
+    st.session_state.selected_date = datetime.today().date()
+
+# Hiển thị lịch
+calendar_options = {
+    "editable": "true",
+    "navLinks": "true",
+    "selectable": "true",
+    "headerToolbar": {
+        "left": "today prev,next",
+        "center": "title",
+        "right": "dayGridDay,dayGridWeek,dayGridMonth",
+    },
+    "initialDate": str(st.session_state.selected_date),
+    "initialView": "dayGridMonth",
+}
+
+# Lấy trạng thái lịch để phát hiện ngày được click
+state = calendar(
+    events=st.session_state.get("events", []),
+    options=calendar_options,
+    custom_css="""
+    .fc-event-past {
+        opacity: 0.8;
     }
-    .date-button {
-        display: inline-block;
-        margin: 0 5px;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        cursor: pointer;
+    .fc-event-time {
+        font-style: italic;
     }
-    </style>
-    <div class="scroll-container">
+    .fc-event-title {
+        font-weight: 700;
+    }
+    .fc-toolbar-title {
+        font-size: 2rem;
+    }
     """,
-    unsafe_allow_html=True
+    key="calendar"
 )
 
-cols = container.columns(len(dates))
+# Xử lý khi ngày được click để thiết lập ngày được chọn
+if state and "start" in state:
+    st.session_state.selected_date = datetime.strptime(state["start"], "%Y-%m-%d").date()
 
-for idx, date in enumerate(dates):
-    if (cols[idx].button(date.strftime('%d.%m.%Y'))):
-        st.session_state.selected_date = date.strftime('%d.%m.%Y')
-        st.experimental_rerun()
-
-
-container.markdown("</div>", unsafe_allow_html=True)
-
-if 'selected_date' in st.session_state:
-    selected_date = st.session_state.selected_date
-    st.write(f"Ngày đã chọn: {selected_date}")
-
-    st.write("Hộp thoại hiển thị thêm thông tin về ngày đã chọn.")
-
-    with st.expander("Chi tiết ngày"):
-        st.write(f"Thông tin chi tiết về ngày {selected_date}")
-        st.write("Thêm nội dung bạn muốn hiển thị ở đây.")
-
-
-
-
-
-
-
-
+# Hiển thị form để tạo sự kiện dựa trên ngày được chọn
+st.write("### Tạo sự kiện")
+create_event()
