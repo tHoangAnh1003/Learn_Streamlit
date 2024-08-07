@@ -1,10 +1,21 @@
+import datetime
+
 import streamlit as st
 from streamlit_calendar import calendar
 
 st.set_page_config(page_title="Demo for streamlit-calendar", page_icon="📆")
 
+with st.expander("**Information**", expanded=False):
+    title_event1 = st.text_input("Event Title: ")
+    start_date = st.date_input("Start Date: ")
+    end_date = st.date_input("End Date: ")
+    description = st.text_area("Description: ")
+    color = st.selectbox("Choose Color:", ("red", "yellow", "orange", "green", "blue", "brown"))
+
+    submit = st.button("Submit", type="primary")
+
 mode = st.selectbox(
-    "**Calendar Mode**:",
+    "Choose Mode:",
     (
         "daygrid",
         "list",
@@ -12,23 +23,9 @@ mode = st.selectbox(
     ),
 )
 
-with st.expander("**Information**", expanded=False):
-    title_event1 = st.text_input("Event Title: ")
-    color = st.selectbox("Choose Color:", ("red",
-                                           "yellow",
-                                           "orange",
-                                           "green",
-                                           "blue",
-                                           "brown"))
-    start_date = st.date_input("Start Date: ")
-    end_date = st.date_input("End Date: ")
-    description = st.text_area("Description: ")
-
-    submit = st.button("Submit", type="primary")
-
 if "events" not in st.session_state:
     st.session_state.events = [
-        # ... Gán dữ liệu cứng
+        # ... Hardcoded data
     ]
 
 if submit:
@@ -47,6 +44,7 @@ calendar_options = {
     "editable": "true",
     "navLinks": "true",
     "selectable": "true",
+    "eventContent": f'{title_event1}: {description}',
 }
 
 if mode == "daygrid":
@@ -56,12 +54,12 @@ if mode == "daygrid":
             "center": "title",
             "right": "dayGridDay,dayGridWeek,dayGridMonth",
         },
-        "initialDate": "2023-07-01",
+        "initialDate": datetime.date.today().isoformat(),
         "initialView": "dayGridMonth",
     })
 elif mode == "list":
     calendar_options.update({
-        "initialDate": "2023-07-01",
+        "initialDate": datetime.date.today().isoformat(),
         "initialView": "listMonth",
     })
 elif mode == "multimonth":
